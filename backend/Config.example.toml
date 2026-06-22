@@ -1,0 +1,10 @@
+[database]
+host     = "localhost"
+port     = 5431
+user     = "postgres"
+password = "password"
+name     = "vaste"
+
+[server]
+host = "127.0.0.1"
+port = 3000
