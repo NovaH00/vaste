@@ -11,8 +11,8 @@ use crate::error::AppError;
 use crate::AppState;
 use crate::users::services;
 
-use common::error::ErrorResponse;
-use super::schemas::{
+use common::api::error::ErrorResponse;
+use common::api::users::{
     ChangePasswordRequest, RegisterRequest, UpdateEmailRequest,
     UpdateProfileRequest, UpdateUsernameRequest, UserResponse,
 };

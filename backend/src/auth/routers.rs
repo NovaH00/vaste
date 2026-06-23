@@ -4,8 +4,8 @@ use super::extractors::parse_bearer_token;
 use super::services;
 use crate::AppState;
 use crate::error::AppError;
-use common::auth::{LoginRequest, LoginResponse};
-use common::error::ErrorResponse;
+use common::api::auth::{LoginRequest, LoginResponse};
+use common::api::error::ErrorResponse;
 
 
 #[utoipa::path(

@@ -1,11 +1,14 @@
 use utoipa::OpenApi;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
-use common::auth::{LoginRequest, LoginResponse};
-use common::error::ErrorResponse;
-use crate::users::schemas::{
+use common::api::auth::{LoginRequest, LoginResponse};
+use common::api::error::ErrorResponse;
+use common::api::users::{
     ChangePasswordRequest, RegisterRequest, UpdateEmailRequest,
     UpdateProfileRequest, UpdateUsernameRequest, UserResponse,
+};
+use common::api::workspaces::{
+    CreateWorkspaceRequest, UpdateWorkspaceRequest, WorkspaceResponse,
 };
 
 #[derive(OpenApi)]
@@ -22,6 +25,11 @@ use crate::users::schemas::{
         crate::users::routers::update_profile,
         crate::users::routers::change_password,
         crate::users::routers::delete_user_handler,
+        crate::workspaces::routers::create_workspace,
+        crate::workspaces::routers::list_workspaces,
+        crate::workspaces::routers::get_workspace,
+        crate::workspaces::routers::update_workspace,
+        crate::workspaces::routers::delete_workspace,
     ),
     components(schemas(
         LoginRequest,
@@ -33,10 +41,14 @@ use crate::users::schemas::{
         UpdateEmailRequest,
         UpdateProfileRequest,
         ChangePasswordRequest,
+        CreateWorkspaceRequest,
+        UpdateWorkspaceRequest,
+        WorkspaceResponse,
     )),
     tags(
         (name = "auth", description = "Authentication endpoints"),
         (name = "users", description = "User management endpoints"),
+        (name = "workspaces", description = "Workspace management endpoints"),
     ),
     modifiers(&SecurityAddon),
 )]

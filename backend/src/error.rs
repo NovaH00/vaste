@@ -3,10 +3,11 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use common::error::ErrorResponse;
+use common::api::error::ErrorResponse;
 
 use crate::auth::errors::AuthError;
 use crate::users::errors::UserServiceError;
+use crate::workspaces::errors::WorkspaceServiceError;
 
 #[derive(Debug)]
 pub enum AppError {
@@ -56,6 +57,18 @@ impl From<UserServiceError> for AppError {
             USE::InvalidPassword => AE::Unauthorized("invalid password".into()),
             USE::PasswordHash(e) => AE::Internal(e.to_string()),
             USE::Database(e) => AE::Internal(e.to_string()),
+        }
+    }
+}
+
+impl From<WorkspaceServiceError> for AppError {
+    fn from(err: WorkspaceServiceError) -> Self {
+        use AppError as AE;
+        use WorkspaceServiceError as WSE;
+        match err {
+            WSE::WorkspaceNotFound => AE::NotFound("workspace not found".into()),
+            WSE::NotOwner => AE::Unauthorized("not the workspace owner".into()),
+            WSE::Database(e) => AE::Internal(e.to_string()),
         }
     }
 }
