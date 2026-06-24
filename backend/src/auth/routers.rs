@@ -3,10 +3,9 @@ use axum::{Json, Router, extract::State, http::HeaderMap, routing::post};
 use super::extractors::parse_bearer_token;
 use super::services;
 use crate::AppState;
-use crate::error::AppError;
+use crate::errors::AppError;
 use common::api::auth::{LoginRequest, LoginResponse};
-use common::api::error::ErrorResponse;
-
+use common::api::errors::ErrorResponse;
 
 #[utoipa::path(
     post,
@@ -31,7 +30,6 @@ async fn login(
     }))
 }
 
-
 #[utoipa::path(
     post,
     path = "/api/auth/logout",
@@ -48,7 +46,6 @@ async fn logout(State(app_state): State<AppState>, headers: HeaderMap) -> Result
     services::logout(&app_state.pool, token).await?;
     Ok(())
 }
-
 
 #[utoipa::path(
     post,

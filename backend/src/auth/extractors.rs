@@ -1,10 +1,10 @@
-use axum::http::HeaderMap;
-use uuid::Uuid;
-use axum::extract::{FromRequestParts, FromRef};
-use axum::http::request::Parts;
 use super::services::validate_session;
-use crate::error::AppError;
 use crate::AppState;
+use crate::errors::AppError;
+use axum::extract::{FromRef, FromRequestParts};
+use axum::http::HeaderMap;
+use axum::http::request::Parts;
+use uuid::Uuid;
 
 pub fn parse_bearer_token(headers: &HeaderMap) -> Result<Uuid, AppError> {
     let token = headers
@@ -15,7 +15,6 @@ pub fn parse_bearer_token(headers: &HeaderMap) -> Result<Uuid, AppError> {
 
     Uuid::parse_str(token).map_err(|_| AppError::Unauthorized("invalid token format".into()))
 }
-
 
 pub struct AuthenticatedUser {
     pub user_id: Uuid,

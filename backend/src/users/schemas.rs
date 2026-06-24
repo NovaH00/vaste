@@ -14,5 +14,3 @@ impl From<User> for UserResponse {
         }
     }
 }
-
-

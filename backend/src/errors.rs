@@ -3,9 +3,10 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use common::api::error::ErrorResponse;
+use common::api::errors::ErrorResponse;
 
 use crate::auth::errors::AuthError;
+use crate::nodes::errors::NodeServiceError;
 use crate::users::errors::UserServiceError;
 use crate::workspaces::errors::WorkspaceServiceError;
 
@@ -67,8 +68,23 @@ impl From<WorkspaceServiceError> for AppError {
         use WorkspaceServiceError as WSE;
         match err {
             WSE::WorkspaceNotFound => AE::NotFound("workspace not found".into()),
-            WSE::NotOwner => AE::Unauthorized("not the workspace owner".into()),
+            WSE::NotOwner => AE::NotFound("workspace not found".into()),
             WSE::Database(e) => AE::Internal(e.to_string()),
+        }
+    }
+}
+
+impl From<NodeServiceError> for AppError {
+    fn from(err: NodeServiceError) -> Self {
+        use AppError as AE;
+        use NodeServiceError as NSE;
+        match err {
+            NSE::NotFound => AE::NotFound("node not found".into()),
+            NSE::NotInWorkspace => AE::NotFound("node not found in workspace".into()),
+            NSE::CircularParent => {
+                AE::BadRequest("cannot move node into its own descendant".into())
+            }
+            NSE::Database(e) => AE::Internal(e.to_string()),
         }
     }
 }

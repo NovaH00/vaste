@@ -2,14 +2,13 @@ use utoipa::OpenApi;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
 use common::api::auth::{LoginRequest, LoginResponse};
-use common::api::error::ErrorResponse;
+use common::api::errors::ErrorResponse;
+use common::api::nodes::{CreateNodeRequest, MoveNodeRequest, NodeResponse, UpdateNodeRequest};
 use common::api::users::{
-    ChangePasswordRequest, RegisterRequest, UpdateEmailRequest,
-    UpdateProfileRequest, UpdateUsernameRequest, UserResponse,
+    ChangePasswordRequest, RegisterRequest, UpdateEmailRequest, UpdateProfileRequest,
+    UpdateUsernameRequest, UserResponse,
 };
-use common::api::workspaces::{
-    CreateWorkspaceRequest, UpdateWorkspaceRequest, WorkspaceResponse,
-};
+use common::api::workspaces::{CreateWorkspaceRequest, UpdateWorkspaceRequest, WorkspaceResponse};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -30,6 +29,12 @@ use common::api::workspaces::{
         crate::workspaces::routers::get_workspace,
         crate::workspaces::routers::update_workspace,
         crate::workspaces::routers::delete_workspace,
+        crate::nodes::routers::create_node,
+        crate::nodes::routers::list_nodes,
+        crate::nodes::routers::get_node,
+        crate::nodes::routers::update_node,
+        crate::nodes::routers::delete_node,
+        crate::nodes::routers::move_node,
     ),
     components(schemas(
         LoginRequest,
@@ -44,11 +49,16 @@ use common::api::workspaces::{
         CreateWorkspaceRequest,
         UpdateWorkspaceRequest,
         WorkspaceResponse,
+        CreateNodeRequest,
+        UpdateNodeRequest,
+        NodeResponse,
+        MoveNodeRequest,
     )),
     tags(
         (name = "auth", description = "Authentication endpoints"),
         (name = "users", description = "User management endpoints"),
         (name = "workspaces", description = "Workspace management endpoints"),
+        (name = "nodes", description = "Tree node management endpoints"),
     ),
     modifiers(&SecurityAddon),
 )]

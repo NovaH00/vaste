@@ -1,19 +1,19 @@
 use axum::{
     Json, Router,
-    extract::{Path, State, Query},
+    extract::{Path, Query, State},
     http::StatusCode,
     routing::{get, post},
 };
 use uuid::Uuid;
 
-use crate::auth::extractors::AuthenticatedUser;
-use crate::error::AppError;
 use crate::AppState;
+use crate::auth::extractors::AuthenticatedUser;
+use crate::errors::AppError;
 use crate::workspaces::services;
 
-use common::api::error::ErrorResponse;
+use common::api::errors::ErrorResponse;
 use common::api::workspaces::{
-    CreateWorkspaceRequest, UpdateWorkspaceRequest, WorkspaceResponse, WorkspaceSearchQuery
+    CreateWorkspaceRequest, UpdateWorkspaceRequest, WorkspaceResponse, WorkspaceSearchQuery,
 };
 
 #[utoipa::path(
@@ -33,13 +33,9 @@ async fn create_workspace(
     State(app_state): State<AppState>,
     Json(body): Json<CreateWorkspaceRequest>,
 ) -> Result<(StatusCode, Json<WorkspaceResponse>), AppError> {
-    let workspace = services::create_workspace(
-        &app_state.pool,
-        user.user_id,
-        body.name,
-        body.description,
-    )
-    .await?;
+    let workspace =
+        services::create_workspace(&app_state.pool, user.user_id, body.name, body.description)
+            .await?;
     Ok((StatusCode::CREATED, Json(workspace.into())))
 }
 
@@ -151,7 +147,14 @@ async fn delete_workspace(
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/api/workspaces", post(create_workspace).get(list_workspaces))
-        .route("/api/workspaces/{id}", get(get_workspace).patch(update_workspace).delete(delete_workspace))
+        .route(
+            "/api/workspaces",
+            post(create_workspace).get(list_workspaces),
+        )
+        .route(
+            "/api/workspaces/{id}",
+            get(get_workspace)
+                .patch(update_workspace)
+                .delete(delete_workspace),
+        )
 }
-

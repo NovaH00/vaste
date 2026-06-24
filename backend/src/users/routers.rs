@@ -6,15 +6,15 @@ use axum::{
 };
 use uuid::Uuid;
 
-use crate::auth::extractors::AuthenticatedUser;
-use crate::error::AppError;
 use crate::AppState;
+use crate::auth::extractors::AuthenticatedUser;
+use crate::errors::AppError;
 use crate::users::services;
 
-use common::api::error::ErrorResponse;
+use common::api::errors::ErrorResponse;
 use common::api::users::{
-    ChangePasswordRequest, RegisterRequest, UpdateEmailRequest,
-    UpdateProfileRequest, UpdateUsernameRequest, UserResponse,
+    ChangePasswordRequest, RegisterRequest, UpdateEmailRequest, UpdateProfileRequest,
+    UpdateUsernameRequest, UserResponse,
 };
 
 #[utoipa::path(
@@ -145,13 +145,8 @@ async fn update_profile(
     State(app_state): State<AppState>,
     Json(body): Json<UpdateProfileRequest>,
 ) -> Result<Json<UserResponse>, AppError> {
-    let user = services::change_profile(
-        &app_state.pool,
-        user.user_id,
-        body.display_name,
-        body.bio,
-    )
-    .await?;
+    let user = services::change_profile(&app_state.pool, user.user_id, body.display_name, body.bio)
+        .await?;
     Ok(Json(user.into()))
 }
 
